@@ -31,8 +31,9 @@ jobs:
           password: ${{ secrets.GITHUBADGANGSTOKEN }}
 
       - name: Build the Docker image
-        run: docker build . -f AuthServiceAPI/Dockerfile \
-          -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION}
+        run: docker build -f AuthServiceAPI/Dockerfile \
+          -t ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION} \
+          AuthServiceAPI/
 
       - name: Push Docker image to Docker Hub
         run: docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION}
