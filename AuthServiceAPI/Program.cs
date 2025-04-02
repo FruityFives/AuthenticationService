@@ -1,4 +1,28 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+string mySecret = builder.Configuration["Secret"] ?? "none";
+string myIssuer = builder.Configuration["Issuer"] ?? "none";
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = myIssuer,
+            ValidAudience = "http://localhost/",
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(mySecret))
+        };
+    });
 
 // Add services to the container.
 
@@ -18,6 +42,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
