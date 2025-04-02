@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=build /app/published-app /app
 
 # Set the entry point for the application
-ENTRYPOINT ["dotnet", "/app/AuthService.dll"]
+ENTRYPOINT ["dotnet", "/app/AuthServiceAPI.dll"]
