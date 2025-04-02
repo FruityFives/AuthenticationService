@@ -1,22 +1,14 @@
-# Use the official image as a base
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 WORKDIR /app
-EXPOSE 80
-
-# Use the SDK image to build the application
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["AuthServiceAPI/AuthServiceAPI.csproj", "AuthServiceAPI/"]
-RUN dotnet restore "AuthServiceAPI/AuthServiceAPI.csproj"
 COPY . .
-WORKDIR "/src/AuthServiceAPI"
-RUN dotnet build "AuthServiceAPI.csproj" -c Release -o /app/build
+RUN dotnet restore
+RUN dotnet publish -o /app/published-app
 
-FROM build AS publish
-RUN dotnet publish "AuthServiceAPI.csproj" -c Release -o /app/publish
-
-# Copy the build output and configure the entry point for the container
-FROM base AS final
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AuthServiceAPI.dll"]
+COPY --from=build /app/published-app /app
+
+# Set the entry point for the application
+ENTRYPOINT ["dotnet", "/app/AuthService.dll"]
