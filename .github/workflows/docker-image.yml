@@ -28,7 +28,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.GithubAdgangstoken }}
+          password: ${{ secrets.GITHUBADGANGSTOKEN }}
 
       - name: Build the Docker image
         run: docker build . -f CatalogServiceAPI/Dockerfile \
