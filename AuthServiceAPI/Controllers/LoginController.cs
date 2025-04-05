@@ -7,6 +7,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using AuthServiceAPI.Models;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace AuthServiceAPI.Controllers
 {
