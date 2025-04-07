@@ -71,7 +71,7 @@ namespace AuthServiceAPI.Controllers
             return StatusCode(500, "Could not parse user info from UserService.");
         }
 
-        var token = GenerateJwtToken(user.Username, user.Role);
+        var token = GenerateJwtToken(user.Username);
         _logger.LogInformation("JWT token generated for user: {Username}", user.Username);
 
         return Ok(new { token });
