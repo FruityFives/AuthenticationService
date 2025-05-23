@@ -95,14 +95,15 @@ namespace AuthServiceAPI.Controllers
       
         
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(string username, string role)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Secret"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, username)
+                new Claim(ClaimTypes.NameIdentifier, username),
+                new Claim(ClaimTypes.Role, role)
             };
 
             var token = new JwtSecurityToken(
