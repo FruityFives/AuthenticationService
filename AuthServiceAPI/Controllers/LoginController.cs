@@ -68,8 +68,8 @@ namespace AuthServiceAPI.Controllers
                     return StatusCode(500, "Could not parse user info from UserService.");
                 }
 
-                var token = GenerateJwtToken(user.Username);
-                _logger.LogInformation("JWT token generated for user: {Username}", user.Username);
+                var token = GenerateJwtToken(user.Username, user.Role);
+                _logger.LogInformation("JWT token generated for user: {Username} with role {Role}", user.Username, user.Role);
 
                 return Ok(new { token });
             }
@@ -92,27 +92,29 @@ namespace AuthServiceAPI.Controllers
         return Ok($"Token is valid. Logged in as: {username}");
         }
 
-      
-        
 
-        private string GenerateJwtToken(string username)
+
+
+        private string GenerateJwtToken(string username, string role)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Secret"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, username)
+        new Claim(ClaimTypes.NameIdentifier, username),
+        new Claim(ClaimTypes.Role, role) // Dette er vigtigt!
             };
 
             var token = new JwtSecurityToken(
-                _config["Issuer"],
-                "http://localhost/",
-                claims,
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
